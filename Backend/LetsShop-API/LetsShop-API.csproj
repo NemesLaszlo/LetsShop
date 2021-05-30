@@ -6,6 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="SeedData\brands.json" />
+    <Content Remove="SeedData\delivery.json" />
+    <Content Remove="SeedData\products.json" />
+    <Content Remove="SeedData\types.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="SeedData\brands.json" />
+    <None Include="SeedData\delivery.json" />
+    <None Include="SeedData\products.json" />
+    <None Include="SeedData\types.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.6" />

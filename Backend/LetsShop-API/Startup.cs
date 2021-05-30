@@ -1,3 +1,4 @@
+using LetsShop_API.Middleware;
 using LetsShop_API.StartupExtensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,7 +43,9 @@ namespace LetsShop_API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LetsShop_API v1"));
             }
 
-            app.UseHttpsRedirection();
+            app.UseMiddleware<ExceptionMiddleware>();
+
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 

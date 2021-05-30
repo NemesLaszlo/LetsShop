@@ -11,9 +11,9 @@ namespace Core.Entities.OrderAggregate
     {
         public string BuyerEmail { get; set; }
         public DateTimeOffset OrderDate { get; set; } = DateTimeOffset.Now;
-        public Address ShipToAddress { get; set; }
+        public OrderAddress ShipToAddress { get; set; }
         public DeliveryMethod DeliveryMethod { get; set; }
-        public IReadOnlyList<OrderItem> OrderItems { get; set; }
+        public List<OrderItem> OrderItems { get; set; }
         public decimal Subtotal { get; set; }
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public string PaymentIntentId { get; set; }
@@ -22,7 +22,7 @@ namespace Core.Entities.OrderAggregate
         {
         }
 
-        public Order(IReadOnlyList<OrderItem> orderItems, string buyerEmail, Address shipToAddress, DeliveryMethod deliveryMethod, decimal subtotal, string paymentIntentId)
+        public Order(List<OrderItem> orderItems, string buyerEmail, OrderAddress shipToAddress, DeliveryMethod deliveryMethod, decimal subtotal, string paymentIntentId)
         {
             BuyerEmail = buyerEmail;
             ShipToAddress = shipToAddress;
@@ -30,6 +30,14 @@ namespace Core.Entities.OrderAggregate
             OrderItems = orderItems;
             Subtotal = subtotal;
             PaymentIntentId = paymentIntentId;
+
+            shipToAddress.Order = this;
+            shipToAddress.OrderId = this.Id;
+
+            orderItems.ForEach(oi => {
+                oi.Order = this;
+                oi.OrderId = this.Id;
+            });
         }
 
         public decimal GetTotal()

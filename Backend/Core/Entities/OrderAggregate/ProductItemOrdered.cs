@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace Core.Entities.OrderAggregate
 {
-    public class ProductItemOrdered
+    public class ProductItemOrdered : BaseEntity
     {
         public int ProductItemId { get; set; }
         public string ProductName { get; set; }
         public string PictureUrl { get; set; }
+        public int OrderItemId { get; set; }
+        public OrderItem OrderItem { get; set; }
 
         public ProductItemOrdered()
         {

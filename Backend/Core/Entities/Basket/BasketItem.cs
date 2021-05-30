@@ -16,9 +16,7 @@ namespace Core.Entities.Basket
         public string PictureUrl { get; set; }
         public string Brand { get; set; }
         public string Type { get; set; }
-
-        /*[Required]
-        public string CustomerBasketId;
-        public CustomerBasket CustomerBasket;*/
+        public string CustomerBaskedId { get; set; }
+        public CustomerBasket CustomerBasket { get; set; }
     }
 }
