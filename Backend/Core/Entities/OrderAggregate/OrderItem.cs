@@ -23,9 +23,6 @@ namespace Core.Entities.OrderAggregate
             ItemOrdered = itemOrdered;
             Price = price;
             Quantity = quantity;
-
-            itemOrdered.OrderItem = this;
-            itemOrdered.OrderItemId = this.Id;
         }
     }
 }

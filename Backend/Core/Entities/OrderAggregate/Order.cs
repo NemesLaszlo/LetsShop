@@ -30,14 +30,6 @@ namespace Core.Entities.OrderAggregate
             OrderItems = orderItems;
             Subtotal = subtotal;
             PaymentIntentId = paymentIntentId;
-
-            shipToAddress.Order = this;
-            shipToAddress.OrderId = this.Id;
-
-            orderItems.ForEach(oi => {
-                oi.Order = this;
-                oi.OrderId = this.Id;
-            });
         }
 
         public decimal GetTotal()
