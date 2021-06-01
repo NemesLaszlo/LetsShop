@@ -1,4 +1,6 @@
-﻿using Infrastructure.Data;
+﻿using Core.Interfaces;
+using Infrastructure.Data;
+using Infrastructure.Repositories;
 using LetsShop_API.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,6 +33,7 @@ namespace LetsShop_API.StartupExtensions
             });
 
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
+            services.AddScoped<IProductRepository, ProductRepository>();
 
 
             services.AddSwaggerGen(c =>
