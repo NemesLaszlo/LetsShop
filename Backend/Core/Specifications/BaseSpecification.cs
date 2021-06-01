@@ -16,6 +16,7 @@ namespace Core.Specifications
         public int Take { get; private set; }
         public int Skip { get; private set; }
         public bool IsPagingEnabled { get; private set; }
+        public List<string> IncludeStrings { get; } = new List<string>();
 
         public BaseSpecification()
         {
@@ -29,6 +30,12 @@ namespace Core.Specifications
         protected void AddInclude(Expression<Func<T, object>> includeExpression)
         {
             Includes.Add(includeExpression);
+        }
+
+        // Using ThenInclude with the specification pattern
+        protected void AddInclude(string includeString)
+        {
+            IncludeStrings.Add(includeString);
         }
 
         protected void AddOrderBy(Expression<Func<T, object>> orderByExpression)

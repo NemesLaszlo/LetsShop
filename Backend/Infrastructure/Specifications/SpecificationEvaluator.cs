@@ -37,6 +37,9 @@ namespace Infrastructure.Specifications
 
             query = spec.Includes.Aggregate(query, (current, include) => current.Include(include));
 
+            // Using ThenInclude with the specification pattern
+            query = spec.IncludeStrings.Aggregate(query,(current, include) => current.Include(include));
+
             return query;
         }
     }

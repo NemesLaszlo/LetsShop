@@ -16,5 +16,8 @@ namespace Core.Specifications
         int Take { get; }
         int Skip { get; }
         bool IsPagingEnabled { get; }
+
+        // Using ThenInclude with the specification pattern
+        List<string> IncludeStrings { get; }
     }
 }
