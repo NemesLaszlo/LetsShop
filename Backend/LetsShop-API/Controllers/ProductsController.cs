@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.Entities.Product;
 using Core.Interfaces;
+using Core.Specifications;
 using Infrastructure.Data;
 using LetsShop_API.Errors;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +32,9 @@ namespace LetsShop_API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
-            return Ok(await _productsRepo.ListAllAsync());
+            var spec = new ProductsWithTypesAndBrandsSpecification();
+
+            return Ok(await _productsRepo.ListAsync(spec));
         }
 
         [HttpGet("{id}")]
@@ -39,7 +42,13 @@ namespace LetsShop_API.Controllers
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            return Ok(await _productsRepo.GetByIdAsync(id));
+            var spec = new ProductsWithTypesAndBrandsSpecification(id);
+
+            var product = await _productsRepo.GetEntityWithSpec(spec);
+
+            if (product == null) return NotFound(new ApiResponse(404));
+
+            return Ok(product);
         }
 
         [HttpGet("brands")]
