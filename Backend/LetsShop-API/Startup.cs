@@ -49,6 +49,8 @@ namespace LetsShop_API
 
             app.UseRouting();
 
+            app.UseStaticFiles();
+
             app.UseCors("CorsPolicy");
 
             app.UseAuthentication();

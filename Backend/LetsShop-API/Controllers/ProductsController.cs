@@ -3,6 +3,7 @@ using Core.Entities.Product;
 using Core.Interfaces;
 using Core.Specifications;
 using Infrastructure.Data;
+using LetsShop_API.Dtos;
 using LetsShop_API.Errors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,17 +31,21 @@ namespace LetsShop_API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProducts()
+        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts()
         {
             var spec = new ProductsWithTypesAndBrandsSpecification();
 
-            return Ok(await _productsRepo.ListAsync(spec));
+            var products = await _productsRepo.ListAsync(spec);
+
+            var resultDatas = _mapper.Map<IReadOnlyList<ProductToReturnDto>>(products);
+
+            return Ok(resultDatas);
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
         {
             var spec = new ProductsWithTypesAndBrandsSpecification(id);
 
@@ -48,7 +53,9 @@ namespace LetsShop_API.Controllers
 
             if (product == null) return NotFound(new ApiResponse(404));
 
-            return Ok(product);
+            var resultData = _mapper.Map<ProductToReturnDto>(product);
+
+            return Ok(resultData);
         }
 
         [HttpGet("brands")]
@@ -60,7 +67,7 @@ namespace LetsShop_API.Controllers
         [HttpGet("types")]
         public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetTypes()
         {
-            return Ok(await _productBrandRepo.ListAllAsync());
+            return Ok(await _productTypeRepo.ListAllAsync());
         }
     }
 }
