@@ -5,6 +5,7 @@ using Core.Specifications;
 using Infrastructure.Data;
 using LetsShop_API.Dtos;
 using LetsShop_API.Errors;
+using LetsShop_API.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,15 +32,19 @@ namespace LetsShop_API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts()
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts([FromQuery] ProductSpecParams productParams)
         {
-            var spec = new ProductsWithTypesAndBrandsSpecification();
+            var spec = new ProductsWithTypesAndBrandsSpecification(productParams);
+
+            var countSpec = new ProductsWithFiltersForCountSpecification(productParams);
+
+            var totalItems = await _productsRepo.CountAsync(countSpec);
 
             var products = await _productsRepo.ListAsync(spec);
 
             var resultDatas = _mapper.Map<IReadOnlyList<ProductToReturnDto>>(products);
 
-            return Ok(resultDatas);
+            return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex, productParams.PageSize, totalItems, resultDatas));
         }
 
         [HttpGet("{id}")]
