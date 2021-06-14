@@ -1,0 +1,26 @@
+name: Backend
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Clear local NuGet cache
+      run: dotnet nuget locals all --clear
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: Backend/LetsShop-API
+    - name: Build
+      run: dotnet build --configuration Release Backend/LetsShop-API/LetsShop-API.sln
