@@ -42,6 +42,7 @@ namespace LetsShop_API.StartupExtensions
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LestDate_API", Version = "v1" });
             });
 
+            // Handle api errors with array structure to make is easy to work with them on the frontend
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = actionContext =>
