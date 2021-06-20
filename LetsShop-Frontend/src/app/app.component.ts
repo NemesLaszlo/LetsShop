@@ -1,8 +1,4 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { Pagination } from './shared/_models/pagination';
-import { Product } from './shared/_models/product';
 
 @Component({
   selector: 'app-root',
@@ -10,18 +6,11 @@ import { Product } from './shared/_models/product';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
-  baseUrl = environment.apiUrl
   title = 'LetsShop-Frontend';
-  products: Product[];
 
-  constructor(private http: HttpClient) { }
+  constructor() { }
 
   ngOnInit(): void {
-    this.http.get(this.baseUrl + 'products?pageSize=50').subscribe((response: Pagination) => {
-      this.products = response.data;
-    }, error => {
-      console.log(error);
-    })
   }
 
 }
