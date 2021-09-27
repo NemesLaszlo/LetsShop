@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +20,16 @@ namespace LetsShop_API.StartupExtensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+            // SQL Relational Database
             services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+
+            // Redis Memory Database
+            services.AddSingleton<IConnectionMultiplexer>(c =>
+            {
+                var configuration = ConfigurationOptions.Parse(config.GetConnectionString("Redis"), true);
+                return ConnectionMultiplexer.Connect(configuration);
+            });
 
             services.AddCors(opt =>
             {
@@ -36,6 +45,7 @@ namespace LetsShop_API.StartupExtensions
 
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+            services.AddScoped<IBasketRepository, BasketRepository>();
 
             services.AddSwaggerGen(c =>
             {
