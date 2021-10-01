@@ -3,8 +3,11 @@ using Core.Entities.Identity;
 using Core.Interfaces;
 using LetsShop_API.Dtos;
 using LetsShop_API.Errors;
+using LetsShop_API.UserManagerExtensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +56,12 @@ namespace LetsShop_API.Controllers
             };
         }
 
+        [HttpGet("emailexists")]
+        public async Task<ActionResult<bool>> CheckEmailExistsAsync([FromQuery] string email)
+        {
+            return await _userManager.FindByEmailAsync(email) != null;
+        }
+
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
@@ -79,6 +88,72 @@ namespace LetsShop_API.Controllers
             return CreateUserObject(user);
         }
 
+        [HttpPost("register")]
+        public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+        {
+            if (!IsValidEmailAddress(registerDto.Email))
+            {
+                ModelState.AddModelError("email", "Invalid Email Form");
+                return ValidationProblem();
+            }
 
+            if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
+            {
+                ModelState.AddModelError("email", "Email Taken");
+                return ValidationProblem();
+            }
+
+            if (await _userManager.Users.AnyAsync(x => x.DisplayName == registerDto.DisplayName))
+            {
+                ModelState.AddModelError("username", "Username Taken");
+                return ValidationProblem();
+            }
+
+            var user = new AppUser
+            {
+                DisplayName = registerDto.DisplayName,
+                Email = registerDto.Email,
+                UserName = registerDto.Email
+            };
+
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+            if (!result.Succeeded) return BadRequest(new ApiResponse(400));
+
+            return CreateUserObject(user);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
+            var user = await _userManager.FindByEmailFromClaimsPrinciple(User);
+
+            return CreateUserObject(user);
+        }
+
+        [Authorize]
+        [HttpGet("address")]
+        public async Task<ActionResult<AddressDto>> GetUserAddress()
+        {
+            var user = await _userManager.FindByEmailWithAddressAsync(User);
+
+            return _mapper.Map<AddressDto>(user.Address);
+        }
+
+        [Authorize]
+        [HttpPut("address")]
+        public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto address)
+        {
+            var user = await _userManager.FindByEmailWithAddressAsync(User);
+
+            user.Address = _mapper.Map<Address>(address);
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded) return Ok(_mapper.Map<AddressDto>(user.Address));
+
+            return BadRequest("Problem updating the user");
+        }
     }
 }
