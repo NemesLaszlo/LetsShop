@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.Entities.Basket;
 using Core.Entities.Identity;
 using Core.Entities.Product;
 using LetsShop_API.Dtos;
@@ -16,6 +17,10 @@ namespace LetsShop_API.Mapping
                 .ForMember(d => d.PictureUrl, o => o.MapFrom<ProductUrlResolver>());
 
             CreateMap<Address, AddressDto>().ReverseMap();
+
+            CreateMap<CustomerBasketDto, CustomerBasket>();
+
+            CreateMap<BasketItemDto, BasketItem>();
         }
     }
 }
