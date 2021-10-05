@@ -47,7 +47,7 @@ export class AccountService {
   loadCurrentUser(token: string) {
     if (token == null) {
       this.currentUserSource.next(null);
-      return of(null);
+      return of(null); // return of - with an Observable
     }
 
     let headers = new HttpHeaders();
