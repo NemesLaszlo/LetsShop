@@ -46,8 +46,10 @@ namespace LetsShop_API.StartupExtensions
 
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IOrderService, OrderService>();
 
             services.AddSwaggerGen(c =>
             {

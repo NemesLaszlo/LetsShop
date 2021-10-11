@@ -16,10 +16,6 @@ namespace Core.Entities.OrderAggregate.Helpers
         public string City { get; set; }
         public string State { get; set; }
         public string ZipCode { get; set; }
-        /*
-        public int OrderId { get; set; }
-        public Order Order { get; set; }
-        */
 
         public OrderAddress()
         {
