@@ -14,6 +14,7 @@ namespace Infrastructure.Services
     {
         private readonly IBasketRepository _basketRepo;
         private readonly IUnitOfWork _unitOfWork;
+
         public OrderService(IBasketRepository basketRepo, IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -31,7 +32,7 @@ namespace Infrastructure.Services
             {
                 var productItem = await _unitOfWork.Repository<Product>().GetByIdAsync(item.Id);
                 var itemOrdered = new ProductItemOrdered(productItem.Id, productItem.Name, productItem.PictureUrl);
-                var orderItem = new OrderItem(itemOrdered, productItem.Price, item.Quantity);
+                var orderItem = new OrderItem(itemOrdered, productItem.Price, item.Quantity); // productItem.Price -> ( does not matter if the frontend says 0 for example )
                 items.Add(orderItem);
             }
 
