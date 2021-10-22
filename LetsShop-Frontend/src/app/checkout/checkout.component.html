@@ -10,7 +10,14 @@
             [checkoutForm]="checkoutForm"
           ></app-checkout-address>
         </cdk-step>
-        <cdk-step [label]="'Delivery'"> </cdk-step>
+        <cdk-step
+          [label]="'Delivery'"
+          [completed]="checkoutForm.get('deliveryForm').valid"
+        >
+          <app-checkout-delivery
+            [checkoutForm]="checkoutForm"
+          ></app-checkout-delivery>
+        </cdk-step>
         <cdk-step [label]="'Review'"> </cdk-step>
         <cdk-step [label]="'Payment'"> </cdk-step>
       </app-stepper>
