@@ -50,6 +50,7 @@ namespace LetsShop_API.StartupExtensions
             services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IPaymentService, PaymentService>();
 
             services.AddSwaggerGen(c =>
             {
