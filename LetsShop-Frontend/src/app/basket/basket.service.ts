@@ -29,6 +29,7 @@ export class BasketService {
       .pipe(
         map((basket: IBasket) => {
           this.basketSource.next(basket);
+          this.shipping = basket.shippingPrice;
           this.calculateTotals();
         })
       )
@@ -103,6 +104,15 @@ export class BasketService {
     basket.shippingPrice = deliveryMethod.price;
     this.calculateTotals();
     this.setBasket(basket);
+  }
+
+  createPaymentIntent() {
+    return this.http.post(this.baseUrl + 'payments/' + this.getCurrentBasketValue().id, {}) // with empty object
+      .pipe(
+        map((basket: IBasket) => {
+          this.basketSource.next(basket);
+        })
+      )
   }
 
 
