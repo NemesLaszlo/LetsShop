@@ -1,12 +1,16 @@
 ﻿using Core.Entities.Basket;
+using Core.Entities.OrderAggregate;
 using Core.Entities.OrderAggregate.Helpers;
 using Core.Interfaces;
+using Core.Specifications;
 using Microsoft.Extensions.Configuration;
 using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+// Allias
 using Order = Core.Entities.OrderAggregate.Order;
 using Product = Core.Entities.Product.Product;
 
@@ -88,14 +92,34 @@ namespace Infrastructure.Services
             return basket;
         }
 
-        public Task<Order> UpdateOrderPaymentFailed(string paymentIntentId)
+        public async Task<Order> UpdateOrderPaymentFailed(string paymentIntentId)
         {
-            throw new NotImplementedException();
+            var spec = new OrderByPaymentIntentIdSpecification(paymentIntentId);
+            var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
+
+            if (order == null) return null;
+
+            order.Status = OrderStatus.PaymentFailed;
+            _unitOfWork.Repository<Order>().Update(order);
+
+            await _unitOfWork.Complete();
+
+            return order;
         }
 
-        public Task<Order> UpdateOrderPaymentSucceeded(string paymentIntentId)
+        public async Task<Order> UpdateOrderPaymentSucceeded(string paymentIntentId)
         {
-            throw new NotImplementedException();
+            var spec = new OrderByPaymentIntentIdSpecification(paymentIntentId);
+            var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
+
+            if (order == null) return null;
+
+            order.Status = OrderStatus.PaymentReceived;
+            _unitOfWork.Repository<Order>().Update(order);
+
+            await _unitOfWork.Complete();
+
+            return order;
         }
     }
 }
