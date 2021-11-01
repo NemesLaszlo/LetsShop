@@ -14,12 +14,14 @@ namespace Infrastructure.Services
     public class OrderService : IOrderService
     {
         private readonly IBasketRepository _basketRepo;
+        private readonly IPaymentService _paymentService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public OrderService(IBasketRepository basketRepo, IUnitOfWork unitOfWork)
+        public OrderService(IBasketRepository basketRepo, IPaymentService paymentService, IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
             _basketRepo = basketRepo;
+            _paymentService = paymentService;
         }
 
         public async Task<Order> CreateOrderAsync(string buyerEmail, int delieveryMethodId, string basketId, OrderAddress shippingAddress)
@@ -43,8 +45,18 @@ namespace Infrastructure.Services
             // calc subtotal
             var subtotal = items.Sum(item => item.Price * item.Quantity);
 
+            // check to see if order exists
+            var spec = new OrderByPaymentIntentIdWithItemSpecification(basket.PaymentIntentId);
+            var existingOrder = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
+
+            if (existingOrder != null)
+            {
+                _unitOfWork.Repository<Order>().Delete(existingOrder);
+                await _paymentService.CreateOrUpdatePaymentIntent(basket.PaymentIntentId);
+            }
+
             // create order
-            var order = new Order(items, buyerEmail, shippingAddress, deliveryMethod, subtotal, null);
+            var order = new Order(items, buyerEmail, shippingAddress, deliveryMethod, subtotal, basket.PaymentIntentId);
             _unitOfWork.Repository<Order>().Add(order);
 
             // save to database
@@ -53,7 +65,7 @@ namespace Infrastructure.Services
             if (result <= 0) return null;
 
             // delete basket
-            await _basketRepo.DeleteBasketAsync(basketId);
+            // await _basketRepo.DeleteBasketAsync(basketId);
 
             // return order
             return order;
