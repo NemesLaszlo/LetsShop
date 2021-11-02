@@ -51,6 +51,7 @@ namespace LetsShop_API.StartupExtensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 
             services.AddSwaggerGen(c =>
             {
