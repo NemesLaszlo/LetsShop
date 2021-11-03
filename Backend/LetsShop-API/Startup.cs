@@ -53,6 +53,15 @@ namespace LetsShop_API
 
             app.UseStaticFiles();
 
+            // For deploy remove the images from the wwwroot and replace to a content folder
+            // Then refrest the ApiUrl for this in the appsettings.json
+            /*app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "Content")),
+                RequestPath = "/content"
+            });*/
+
             app.UseCors("CorsPolicy");
 
             app.UseAuthentication();
@@ -61,6 +70,7 @@ namespace LetsShop_API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }
